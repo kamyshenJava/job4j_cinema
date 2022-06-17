@@ -3,14 +3,15 @@ package ru.job4j.cinema.store;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import ru.job4j.cinema.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Optional;
 
+@Repository
 public class UserStore {
 
     private BasicDataSource pool;
@@ -23,7 +24,7 @@ public class UserStore {
     public Optional<User> add(User user) {
         User rsl = null;
         try (Connection con = pool.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO users(username, emal, phone) VALUES (?, ?, ?)",
+            PreparedStatement ps = con.prepareStatement("INSERT INTO users(username, email, phone) VALUES (?, ?, ?)",
                     PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
