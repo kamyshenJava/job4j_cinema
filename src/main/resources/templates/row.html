@@ -23,27 +23,29 @@
             <a class="nav-link" th:if="${user.username == 'guest'}" th:href="@{/login}">Log in</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:unless="${user.username == 'guest'}" th:href="@{/logout}">Log out</a>
+            <a class="nav-link" th:unless="${user.username == 'guest'}" th:href="@{/logout}">
+              <span th:text="${user.username}"></span>
+              <span>| Log out</span>
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-  <form>
-    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+  <form th:action="@{/row}" method="post">
+    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="row">
       <option selected>Выберите ряд</option>
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
+      <option th:each="row : ${rows}" th:value="${row}" th:text="${row}"></option>
     </select>
-    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-      <option selected>Выберите место</option>
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
-    </select>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <a href="/ticket" class="btn btn-primary" role="button">Назад</a>
+      <button class="btn btn-primary" type="submit">Выбрать</button>
+    </div>
   </form>
+    </div>
+  </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>

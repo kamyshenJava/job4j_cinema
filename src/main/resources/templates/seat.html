@@ -17,9 +17,6 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:href="@{/ticket}">Choose your seat</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" th:if="${user.username == 'guest'}" th:href="@{/signup}">Sign up</a>
                     </li>
                     <li class="nav-item">
@@ -37,12 +34,15 @@
     </nav>
     <div class="card" style="width: 18rem;">
         <div class="card-body">
-            <form th:action="@{/ticket}" method="post">
-                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="sess.id">
-                    <option selected>Выберите сеанс</option>
-                    <option th:each="sess : ${sessions}" th:value="${sess.id}" th:text="${sess.name}"></option>
+            <form th:action="@{/seat}" method="post">
+                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="seat">
+                    <option selected>Выберите место</option>
+                    <option th:each="seat : ${seats}" th:value="${seat}" th:text="${seat}"></option>
                 </select>
-                <button type="submit" class="btn btn-primary">Выбрать</button>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/row" class="btn btn-primary" role="button">Назад</a>
+                    <button class="btn btn-primary" type="submit">Выбрать</button>
+                </div>
             </form>
         </div>
     </div>

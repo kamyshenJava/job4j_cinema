@@ -12,6 +12,13 @@ public class Ticket {
     public Ticket() {
     }
 
+    public Ticket(Session session, int row, int cell, User user) {
+        this.session = session;
+        this.row = row;
+        this.cell = cell;
+        this.user = user;
+    }
+
     public Ticket(int id, Session session, int row, int cell, User user) {
         this.id = id;
         this.session = session;

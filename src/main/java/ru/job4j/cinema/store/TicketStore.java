@@ -11,6 +11,9 @@ import ru.job4j.cinema.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class TicketStore {
@@ -21,7 +24,8 @@ public class TicketStore {
         this.pool = pool;
     }
 
-    public Ticket add(Ticket ticket) {
+    public Optional<Ticket> add(Ticket ticket) {
+        Ticket rsl = null;
         try (Connection con = pool.getConnection();
              PreparedStatement ps = con.prepareStatement(
                      "INSERT INTO ticket(session_id, pos_row, cell, user_id) VALUES (?, ?, ?, ?)",
@@ -34,29 +38,51 @@ public class TicketStore {
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     ticket.setId(rs.getInt("id"));
+                    rsl = ticket;
                 }
             }
         } catch (Exception e) {
             LOG.error("Exception in TicketStore", e);
         }
-        return ticket;
+        return Optional.ofNullable(rsl);
     }
 
-    public Ticket findById(int id) {
-        Ticket rsl = null;
+    public List<Ticket> findByUserId(int userId) {
+        List<Ticket> rsl = new ArrayList<>();
         try (Connection con = pool.getConnection();
              PreparedStatement ps = con.prepareStatement(
                      "SELECT t.id, session_id, name, pos_row, cell, user_id, username, email, phone"
                              + "  FROM ticket t JOIN sessions s ON s.id = t.session_id"
-                             + "  JOIN users u ON user_id = u.id WHERE t.id = ?")) {
-            ps.setInt(1, id);
+                             + "  JOIN users u ON user_id = u.id WHERE user_id = ?")) {
+            ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    rsl = new Ticket(rs.getInt("id"),
+                while (rs.next()) {
+                    rsl.add(new Ticket(rs.getInt("id"),
                             new Session(rs.getInt("session_id"), rs.getString("name")),
                             rs.getInt("pos_row"), rs.getInt("cell"),
                             new User(rs.getInt("user_id"), rs.getString("username"),
-                                    rs.getString("email"), rs.getString("phone")));
+                                    rs.getString("email"), rs.getString("phone"))));
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Exception in TicketStore", e);
+        }
+        return rsl;
+    }
+
+    public List<Ticket> findTicketsForSessionAndRow(int sessionId, int row) {
+        List<Ticket> rsl = new ArrayList<>();
+        try (Connection con = pool.getConnection();
+             PreparedStatement ps = con.prepareStatement(
+                     "SELECT * FROM ticket WHERE session_id = ? AND pos_row = ?")) {
+            ps.setInt(1, sessionId);
+            ps.setInt(2, row);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    rsl.add(new Ticket(rs.getInt("id"),
+                            new Session(rs.getInt("session_id")),
+                            rs.getInt("pos_row"), rs.getInt("cell"),
+                            new User(rs.getInt("user_id"))));
                 }
             }
         } catch (Exception e) {

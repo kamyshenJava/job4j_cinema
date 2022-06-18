@@ -35,7 +35,7 @@
     </div>
     <div class="card-body">
       <div th:if="${fail}" class="alert alert-danger" role="alert">
-        Логин или пароль введены не верно!
+        Логин или пароль введены неверно!
       </div>
       <form th:action="@{/login}" method="POST">
         <div class="form-group">

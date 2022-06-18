@@ -9,6 +9,10 @@ public class Session {
     public Session() {
     }
 
+    public Session(int id) {
+        this.id = id;
+    }
+
     public Session(int id, String name) {
         this.id = id;
         this.name = name;

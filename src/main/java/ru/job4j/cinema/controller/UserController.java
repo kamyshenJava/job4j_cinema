@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping("/signup")
     public String signup(Model model, @ModelAttribute User user) {
         Optional<User> regUser = userService.add(user);
-        String rsl = "redirect:/login";
+        String rsl = "redirect:/ticket";
         if (regUser.isEmpty()) {
             rsl = "redirect:/fail";
         }
@@ -53,14 +53,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(Model model, @ModelAttribute User user, HttpServletRequest req) {
+    public String login(@ModelAttribute User user, HttpServletRequest req) {
         Optional<User> userDb = userService.findUserByEmailAndPhone(user.getEmail(), user.getPhone());
         if (userDb.isEmpty()) {
             return "redirect:/login?fail=true";
         }
         HttpSession session = req.getSession();
         session.setAttribute("user", userDb.get());
-        return "redirect:/index";
+        return "redirect:/ticket";
     }
 
     @GetMapping("/logout")
